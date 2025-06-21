@@ -1,105 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
   <title>Yes or No</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
+      background: #eaf8ff;
       font-family: Arial, sans-serif;
       text-align: center;
-      padding: 30px;
-      background-color: #eaf8ff;
+      margin: 0;
+      padding: 0;
     }
 
-    h1 {
-      font-size: 2.5em;
-      margin-bottom: 10px;
+    .container {
+      max-width: 700px;
+      margin: auto;
+      padding: 20px;
+      background: white;
+      border-radius: 16px;
+      margin-top: 20px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.1);
     }
 
     .logo {
-      margin-bottom: 20px;
+      width: 140px;
+      margin: 20px auto;
     }
 
-    form {
-      margin-bottom: 20px;
+    h1 {
+      font-size: 2em;
+      margin: 10px 0;
     }
 
     input[type="text"] {
       padding: 10px;
-      width: 80%;
-      max-width: 400px;
-      font-size: 1.1em;
+      font-size: 16px;
+      width: 70%;
+      border-radius: 8px;
+      border: 1px solid #ccc;
     }
 
-    button[type="submit"] {
+    button {
       padding: 10px 20px;
-      font-size: 1.1em;
-      background-color: #28a745;
+      font-size: 16px;
+      background-color: #28c428;
       color: white;
       border: none;
+      border-radius: 8px;
       cursor: pointer;
     }
 
-    button[type="submit"]:hover {
-      background-color: #218838;
-    }
-
-    .answer-box {
-      margin-top: 30px;
-      display: none;
-    }
-
-    .main-answer {
-      font-size: 4em;
+    .answer {
+      font-size: 32px;
       font-weight: bold;
-      margin: 20px 0;
+      margin-top: 20px;
     }
 
-    .main-answer.yes {
+    .yes {
       color: green;
     }
 
-    .main-answer.no {
+    .no {
       color: red;
     }
 
     .full-answer {
-      color: #333;
-      font-size: 1em;
       margin-top: 10px;
       display: none;
+      color: black;
     }
 
     .show-more {
-      background: none;
-      color: #007bff;
-      border: none;
-      font-size: 1em;
-      text-decoration: underline;
       cursor: pointer;
+      font-size: 14px;
+      color: #444;
+      text-decoration: underline;
+      margin-top: 8px;
     }
 
-    .ads {
-      margin: 40px 0;
-      padding: 10px;
-      border: 2px dashed #ccc;
-    }
-
-    /* Spinner animation */
-    #loading-spinner {
+    .loader {
       display: none;
-      margin-top: 30px;
-    }
-
-    .spinner {
-      border: 8px solid #f3f3f3;
-      border-top: 8px solid #333;
+      margin-top: 20px;
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #28c428;
       border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      margin: auto;
+      width: 40px;
+      height: 40px;
       animation: spin 1s linear infinite;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     @keyframes spin {
@@ -107,77 +97,115 @@
       100% { transform: rotate(360deg); }
     }
 
-    @media (max-width: 600px) {
-      .main-answer {
-        font-size: 3em;
+    .ad {
+      border: 2px dashed #bbb;
+      padding: 10px;
+      margin: 10px 0;
+      font-size: 14px;
+      color: #666;
+    }
+
+    .sidebar-ads {
+      position: absolute;
+      right: 10px;
+      top: 100px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .video-ad {
+      width: 160px;
+      height: 90px;
+      border: 2px dashed #bbb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      background: #f9f9f9;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar-ads {
+        display: none;
       }
 
       input[type="text"] {
         width: 100%;
+        margin-bottom: 10px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="logo">
-    <img src="/static/logo.png" alt="YES/NO Logo" style="max-width: 150px;" />
+  <div class="sidebar-ads">
+    <div class="video-ad">Video Ad 1</div>
+    <div class="video-ad">Video Ad 2</div>
+    <div class="video-ad">Video Ad 3</div>
   </div>
 
-  <h1>Ask Anything</h1>
+  <div class="container">
+    <img class="logo" src="/static/logo.png" alt="Yes or No Logo">
+    <h1>Ask Anything</h1>
+    <form id="askForm">
+      <input type="text" id="question" name="question" placeholder="Type your question here" required>
+      <button type="submit">Ask</button>
+    </form>
 
-  <form method="POST" onsubmit="showLoading()">
-    <input type="text" name="question" placeholder="Type your question here" required>
-    <button type="submit">Ask</button>
-  </form>
+    <div class="ad">Top Ad Space</div>
+    <div id="loader" class="loader"></div>
 
-  <!-- Top Ad Slot -->
-  <div class="ads">Top Ad Space</div>
-
-  <!-- Loading Spinner -->
-  <div id="loading-spinner">
-    <div class="spinner"></div>
-    <p>Thinking...</p>
-  </div>
-
-  {% if result %}
-  <div class="answer-box" style="display: block;">
-    <div class="main-answer {{ result|lower }}">
-      {{ result }}
+    <div id="result" style="display: none;">
+      <div id="mainAnswer" class="answer"></div>
+      <div class="show-more" onclick="toggleFullAnswer()">▼ Show full answer</div>
+      <div id="fullAnswer" class="full-answer"></div>
     </div>
 
-    {% if explanation %}
-      <button class="show-more" onclick="document.getElementById('full-answer').style.display = 'block'; this.style.display='none';">
-        ▼ Show full answer
-      </button>
-      <div id="full-answer" class="full-answer">
-        {{ explanation }}
-      </div>
-    {% endif %}
+    <div class="ad">In-content Ad Space</div>
+    <div class="ad">Bottom Ad Space — This could be Google AdSense or any banner.</div>
   </div>
-  {% endif %}
-
-  <!-- Bottom Ad Slot -->
-  <div class="ads">Bottom Ad Space — This could be Google AdSense or any banner.</div>
 
   <script>
-    function showLoading() {
-      document.getElementById("loading-spinner").style.display = "block";
+    const form = document.getElementById('askForm');
+    const questionInput = document.getElementById('question');
+    const mainAnswer = document.getElementById('mainAnswer');
+    const fullAnswer = document.getElementById('fullAnswer');
+    const resultDiv = document.getElementById('result');
+    const loader = document.getElementById('loader');
+
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      const question = questionInput.value.trim();
+      if (!question) return;
+
+      // Hide previous results and show loader
+      resultDiv.style.display = 'none';
+      loader.style.display = 'block';
+
+      const res = await fetch('/ask', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question })
+      });
+
+      const data = await res.json();
+      loader.style.display = 'none';
+
+      if (data.answer) {
+        const short = data.answer.trim().endsWith("Yes") ? "Yes" : "No";
+        mainAnswer.className = "answer " + (short === "Yes" ? "yes" : "no");
+        mainAnswer.textContent = short;
+        fullAnswer.textContent = data.answer;
+        fullAnswer.style.display = "none";
+        resultDiv.style.display = 'block';
+      }
+    }
+
+    function toggleFullAnswer() {
+      const full = document.getElementById("fullAnswer");
+      full.style.display = full.style.display === "none" ? "block" : "none";
     }
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
