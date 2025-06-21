@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Yes or No</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+  <!-- Top Ad Banner -->
+  <div class="ad-top">
+    <div class="ad-slot">Top Ad Space</div>
+  </div>
+
+  <!-- Centered Content -->
+  <div class="container">
+
+    <!-- Logo -->
+    <div class="logo-container">
+      <img src="{{ url_for('static', filename='logo.png') }}" alt="Yes or No Logo">
+    </div>
+
+    <h1>Ask Anything</h1>
+
+    <form method="POST">
+      <input type="text" name="question" placeholder="Type your question here" required>
+      <button type="submit">Ask</button>
+    </form>
+
+    <!-- In-content Ad -->
+    <div class="ad-in-content">
+      <div class="ad-slot">In-content Ad Space</div>
+    </div>
+
+    {% if answer %}
+      <div class="result {{ answer|lower }}">
+        {{ answer }}
+      </div>
+
+      <div class="show-more" onclick="toggleExplanation()">▼ Show full answer</div>
+      <div id="explanation" style="display: none;">
+        {{ explanation }}
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Right Sidebar Ads -->
+  <div class="right-ads">
+    <div class="ad-slot">Video Ad 1</div>
+    <div class="ad-slot">Video Ad 2</div>
+    <div class="ad-slot">Video Ad 3</div>
+  </div>
+
+  <!-- Bottom Ad Banner -->
+  <div class="ad-bottom">
+    <div class="ad-slot">Bottom Ad Space — This could be Google AdSense or any banner.</div>
+  </div>
+
+  <script>
+    function toggleExplanation() {
+      const exp = document.getElementById("explanation");
+      exp.style.display = exp.style.display === "none" ? "block" : "none";
+    }
+  </script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
