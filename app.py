@@ -1,12 +1,15 @@
-import openai
-import os
-from dotenv import load_dotenv
 from flask import Flask, request, render_template
+from dotenv import load_dotenv
+import os
+from openai import OpenAI
 
-load_dotenv()  # Only needed for local dev
+load_dotenv()  # Only needed for local development
 
-# ✅ Correct way to set API key for Render and local dev
-openai.api_key = os.getenv("OPENAI_API_KEY")
+# Load API key from environment (Render or local .env)
+openai_api_key = os.getenv("OPENAI_API_KEY")
+
+# Initialize OpenAI client
+client = OpenAI(api_key=openai_api_key)
 
 app = Flask(__name__)
 
@@ -17,33 +20,24 @@ def ask_chatgpt(question):
         f"Question: {question}"
     )
 
-    response = openai.ChatCompletion.create(
+    response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
             {"role": "system", "content": "You're a helpful assistant that answers questions briefly and clearly."},
             {"role": "user", "content": prompt}
         ]
     )
-    return response.choices[0].message["content"]
+
+    return response.choices[0].message.content.strip()
 
 @app.route("/", methods=["GET", "POST"])
-def index():
+def index(**kwargs):
     answer = ""
     if request.method == "POST":
         question = request.form["question"]
         answer = ask_chatgpt(question)
     return render_template("index.html", answer=answer)
 
-import os
-
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
-
-
-
-
-
-
-
-
 
