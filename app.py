@@ -1,16 +1,7 @@
 import os
-from openai import OpenAI
-from flask import Flask, render_template, request
-
-# Only load .env file locally (for development)
-if not os.getenv("RENDER"):
-    from dotenv import load_dotenv
-    load_dotenv()
-
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
-
-# Set OpenAI API key from environment
+import openai
+openai.api_key = os.getenv("OPENAI_API_KEY")
+client = openai.OpenAI()
 
 app = Flask(__name__)
 
