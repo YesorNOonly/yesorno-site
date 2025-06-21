@@ -1,85 +1,173 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Open Graph for social sharing -->
-  <meta property="og:title" content="Yes or No">
-  <meta property="og:description" content="Ask anything and get a simple Yes or No. A fun and fast answer to your questions!">
-  <meta property="og:image" content="https://yesornoonly.com/static/logo.png">
-  <meta property="og:url" content="https://yesornoonly.com">
-
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Yes or No">
-  <meta name="twitter:description" content="Ask anything and get a simple Yes or No. A fun and fast answer to your questions!">
-  <meta name="twitter:image" content="https://yesornoonly.com/static/logo.png">
-
-  <!-- Standard meta -->
-  <meta name="description" content="Ask anything and get a simple Yes or No. A fun and fast answer to your questions!">
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Yes or No</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 30px;
+      background-color: #eaf8ff;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+    }
+
+    .logo {
+      margin-bottom: 20px;
+    }
+
+    form {
+      margin-bottom: 20px;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      width: 80%;
+      max-width: 400px;
+      font-size: 1.1em;
+    }
+
+    button[type="submit"] {
+      padding: 10px 20px;
+      font-size: 1.1em;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #218838;
+    }
+
+    .answer-box {
+      margin-top: 30px;
+      display: none;
+    }
+
+    .main-answer {
+      font-size: 4em;
+      font-weight: bold;
+      margin: 20px 0;
+    }
+
+    .main-answer.yes {
+      color: green;
+    }
+
+    .main-answer.no {
+      color: red;
+    }
+
+    .full-answer {
+      color: #333;
+      font-size: 1em;
+      margin-top: 10px;
+      display: none;
+    }
+
+    .show-more {
+      background: none;
+      color: #007bff;
+      border: none;
+      font-size: 1em;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .ads {
+      margin: 40px 0;
+      padding: 10px;
+      border: 2px dashed #ccc;
+    }
+
+    /* Spinner animation */
+    #loading-spinner {
+      display: none;
+      margin-top: 30px;
+    }
+
+    .spinner {
+      border: 8px solid #f3f3f3;
+      border-top: 8px solid #333;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      margin: auto;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 600px) {
+      .main-answer {
+        font-size: 3em;
+      }
+
+      input[type="text"] {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
-
-  <!-- Top Ad Banner -->
-  <div class="ad-top">
-    <div class="ad-slot">Top Ad Space</div>
+  <div class="logo">
+    <img src="/static/logo.png" alt="YES/NO Logo" style="max-width: 150px;" />
   </div>
 
-  <!-- Centered Content -->
-  <div class="container">
+  <h1>Ask Anything</h1>
 
-    <!-- Logo -->
-    <div class="logo-container">
-      <img src="{{ url_for('static', filename='logo.png') }}" alt="Yes or No Logo">
+  <form method="POST" onsubmit="showLoading()">
+    <input type="text" name="question" placeholder="Type your question here" required>
+    <button type="submit">Ask</button>
+  </form>
+
+  <!-- Top Ad Slot -->
+  <div class="ads">Top Ad Space</div>
+
+  <!-- Loading Spinner -->
+  <div id="loading-spinner">
+    <div class="spinner"></div>
+    <p>Thinking...</p>
+  </div>
+
+  {% if result %}
+  <div class="answer-box" style="display: block;">
+    <div class="main-answer {{ result|lower }}">
+      {{ result }}
     </div>
 
-    <h1>Ask Anything</h1>
-
-    <form method="POST">
-      <input type="text" name="question" placeholder="Type your question here" required>
-      <button type="submit">Ask</button>
-    </form>
-
-    <!-- In-content Ad -->
-    <div class="ad-in-content">
-      <div class="ad-slot">In-content Ad Space</div>
-    </div>
-
-    {% if answer %}
-      <div class="result {{ answer|lower }}">
-        {{ answer }}
-      </div>
-
-      <div class="show-more" onclick="toggleExplanation()">▼ Show full answer</div>
-      <div id="explanation" style="display: none;">
+    {% if explanation %}
+      <button class="show-more" onclick="document.getElementById('full-answer').style.display = 'block'; this.style.display='none';">
+        ▼ Show full answer
+      </button>
+      <div id="full-answer" class="full-answer">
         {{ explanation }}
       </div>
     {% endif %}
   </div>
+  {% endif %}
 
-  <!-- Right Sidebar Ads -->
-  <div class="right-ads">
-    <div class="ad-slot">Video Ad 1</div>
-    <div class="ad-slot">Video Ad 2</div>
-    <div class="ad-slot">Video Ad 3</div>
-  </div>
-
-  <!-- Bottom Ad Banner -->
-  <div class="ad-bottom">
-    <div class="ad-slot">Bottom Ad Space — This could be Google AdSense or any banner.</div>
-  </div>
+  <!-- Bottom Ad Slot -->
+  <div class="ads">Bottom Ad Space — This could be Google AdSense or any banner.</div>
 
   <script>
-    function toggleExplanation() {
-      const exp = document.getElementById("explanation");
-      exp.style.display = exp.style.display === "none" ? "block" : "none";
+    function showLoading() {
+      document.getElementById("loading-spinner").style.display = "block";
     }
   </script>
-
 </body>
 </html>
+
+
 
 
 
