@@ -30,13 +30,27 @@ def ask_chatgpt(question):
 
     return response.choices[0].message.content.strip()
 
-@app.route("/", methods=["GET", "POST"])
-def index(**kwargs):
-    answer = ""
-    if request.method == "POST":
-        question = request.form["question"]
-        answer = ask_chatgpt(question)
-    return render_template("index.html", answer=answer)
+@app.route("/ask", methods=["POST"])
+def ask():
+    data = request.get_json()
+    question = data.get("question", "")
+    
+    if not question:
+        return {"error": "No question provided."}, 400
+
+    answer = ask_chatgpt(question)
+
+    # Decide short 'Yes' / 'No' based on final word
+    final_word = answer.strip().lower().split()[-1]
+    if "yes" in final_word:
+        short = "Yes"
+    elif "no" in final_word:
+        short = "No"
+    else:
+        short = "Couldn't decide"
+
+    return {"answer": short, "full_answer": answer}
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
