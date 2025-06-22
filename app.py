@@ -1,29 +1,22 @@
-from flask import Flask, request, render_template
-from dotenv import load_dotenv
+from flask import Flask, render_template, request
 import os
-from openai import OpenAI
-
-load_dotenv()  # Only needed for local development
-
-# Load API key from environment (Render or local .env)
-openai_api_key = os.getenv("OPENAI_API_KEY")
-
-# Initialize OpenAI client
-client = OpenAI(api_key=openai_api_key)
+import openai  # or whatever you're using for ChatGPT
 
 app = Flask(__name__)
 
+@app.route("/")
+def home():
+    return render_template("index.html")
+
 def ask_chatgpt(question):
-    prompt = (
-        f"Answer this question in 1-2 sentences. "
-        f"End your answer with a new line that says just 'Answer: Yes' or 'Answer: No'.\n\n"
-        f"Question: {question}"
-    )
+    prompt = f"""Answer this question in 1-2 sentences.
+End your answer with a new line that says just 'Answer: Yes' or 'Answer: No'.\n\n
+Question: {question}"""
 
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "You're a helpful assistant that answers questions briefly and clearly."},
+            {"role": "system", "content": "You're a helpful assistant that answers questions briefly."},
             {"role": "user", "content": prompt}
         ]
     )
@@ -34,13 +27,12 @@ def ask_chatgpt(question):
 def ask():
     data = request.get_json()
     question = data.get("question", "")
-    
+
     if not question:
         return {"error": "No question provided."}, 400
 
     answer = ask_chatgpt(question)
 
-    # Decide short 'Yes' / 'No' based on final word
     final_word = answer.strip().lower().split()[-1]
     if "yes" in final_word:
         short = "Yes"
@@ -51,7 +43,5 @@ def ask():
 
     return {"answer": short, "full_answer": answer}
 
-
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
-
